@@ -1,0 +1,10 @@
+{
+  "name": "prelim-exam-download",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Simple MERN app: React download button + Express-style Vercel API that tracks download counts in MongoDB.",
+  "dependencies": {
+    "mongodb": "^6.8.0"
+  }
+}
