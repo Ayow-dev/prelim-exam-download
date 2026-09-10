@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function App() {
   const [count, setCount] = useState(null);
   const [downloading, setDownloading] = useState(false);
+  const requestInFlight = useRef(false);
 
   useEffect(() => {
     fetch("/api/download-count")
@@ -12,13 +13,16 @@ function App() {
   }, []);
 
   const handleDownload = async () => {
+    if (requestInFlight.current) return;
+
+    requestInFlight.current = true;
     setDownloading(true);
 
     // Best-effort counter increment; download proceeds even if this fails.
     try {
       const res = await fetch("/api/download-count", { method: "POST" });
       const data = await res.json();
-      setCount(data.count);
+      setCount((currentCount) => Math.max(currentCount ?? 0, data.count));
     } catch (e) {
       // ignore counting errors
     }
@@ -31,6 +35,7 @@ function App() {
     document.body.removeChild(link);
 
     setDownloading(false);
+    requestInFlight.current = false;
   };
 
   return (
